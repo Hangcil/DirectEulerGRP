@@ -12,7 +12,7 @@ int main(int, char**)
 	auto r1 = solver.solve();
 	double c_ml = sqrt(1.4 * r1.mlState(1) / r1.mlState(0));
 	double c_mr = sqrt(1.4 * r1.mrState(1) / r1.mrState(0));
-	
+
 	// numeric solution
 	auto U = vector<vec3d>(100);
 	for (auto i = 0; i < 100; i++)

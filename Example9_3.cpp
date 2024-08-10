@@ -5,7 +5,7 @@
 int main(int, char**)
 {
 	// numeric solution
-    auto U = vector<vec3d>(70);
+	auto U = vector<vec3d>(70);
 	for (auto i = 0; i < 70; i++)
 	{
 		if (i < 7)
@@ -28,13 +28,13 @@ int main(int, char**)
 			U[i] << 0.3, 1.0, 0.0;
 		}
 	}
-    FVM_GRP numericSolver(U, -40.0, 100.0);
-    numericSolver.setGamma(1.4);
-    numericSolver.setTimeAxis(30.0, 0.2);
-    auto r = numericSolver.solve();
+	FVM_GRP numericSolver(U, -40.0, 100.0);
+	numericSolver.setGamma(1.4);
+	numericSolver.setTimeAxis(30.0, 0.2);
+	auto r = numericSolver.solve();
 
 	// write the numeric result to the files
-    auto r_T = r[r.size() - 1];
+	auto r_T = r[r.size() - 1];
 	vector<double> rho, p, u;
 	for (auto i = 0; i < r_T.size(); i++)
 	{
@@ -70,5 +70,5 @@ int main(int, char**)
 		oFileU.close();
 	}
 
-    return 0;
+	return 0;
 }

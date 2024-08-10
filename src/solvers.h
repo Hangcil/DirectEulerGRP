@@ -53,7 +53,7 @@ protected:
 	double gamma = 1.403;
 };
 
-class GRPSolver:public RPSolver
+class GRPSolver :public RPSolver
 {
 public:
 	GRPSolver(const vec3d& lState, const vec3d& rState, const vec3d& lStateSlope, const vec3d& rStateSlope); //[rho,p,u]

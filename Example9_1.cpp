@@ -2,7 +2,7 @@
 #include <fstream>
 #include "FVM.h"
 
-int main(int, char **)
+int main(int, char**)
 {
 	// analytic solution
 	vec3d Ul(1.0, 1.0, 0.0);
@@ -12,25 +12,25 @@ int main(int, char **)
 	auto r1 = solver.solve();
 
 	// numeric solution
-    auto U = vector<vec3d>(100);
-    for (auto i = 0; i < 100; i++)
-    {
-        if (i < 50)
-        {
-            U[i] << 1.0, 1.0, 0.0;
-        }
-        else
-        {
-            U[i] << 0.125, 0.100, 0.0;
-        }
-    }
-    FVM_GRP numericSolver(U, 0.0, 100.0);
-    numericSolver.setGamma(1.4);
-    numericSolver.setTimeAxis(15.0, 0.2);
-    auto r = numericSolver.solve();
-    
+	auto U = vector<vec3d>(100);
+	for (auto i = 0; i < 100; i++)
+	{
+		if (i < 50)
+		{
+			U[i] << 1.0, 1.0, 0.0;
+		}
+		else
+		{
+			U[i] << 0.125, 0.100, 0.0;
+		}
+	}
+	FVM_GRP numericSolver(U, 0.0, 100.0);
+	numericSolver.setGamma(1.4);
+	numericSolver.setTimeAxis(15.0, 0.2);
+	auto r = numericSolver.solve();
+
 	// write the numeric result to the files
-    auto r_T = r[r.size() -1];
+	auto r_T = r[r.size() - 1];
 	vector<double> rho, p, u;
 	for (auto i = 0; i < r_T.size(); i++)
 	{
@@ -65,6 +65,6 @@ int main(int, char **)
 		}
 		oFileU.close();
 	}
-    
-    return 0;
+
+	return 0;
 }
