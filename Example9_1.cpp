@@ -9,7 +9,7 @@ int main(int, char**)
 	vec3d Ur(0.125, 0.100, 0.0);
 	auto solver = RPSolver(Ul, Ur);
 	solver.setGamma(1.4);
-	auto r1 = solver.solve();
+	solver.solve();
 
 	// numeric solution
 	auto U = vector<vec3d>(100);
@@ -31,38 +31,19 @@ int main(int, char**)
 
 	// write the numeric result to the files
 	auto r_T = r[r.size() - 1];
-	vector<double> rho, p, u;
-	for (auto i = 0; i < r_T.size(); i++)
-	{
-		rho.push_back(r_T[i](0));
-		p.push_back(r_T[i](1));
-		u.push_back(r_T[i](2));
-	}
 	ofstream oFileRho("./test_rho.txt");
-	if (oFileRho)
+	ofstream oFileP("./test_p.txt");
+	ofstream oFileU("./test_u.txt");
+	if (oFileRho && oFileP && oFileU)
 	{
-		for (auto i = 0; i < 100; i++)
+		for (auto i = 0; i < r_T.size(); i++)
 		{
-			oFileRho << rho[i] << ' ';
+			oFileRho << r_T[i](0) << ' ';
+			oFileP << r_T[i](1) << ' ';
+			oFileU << r_T[i](2) << ' ';
 		}
 		oFileRho.close();
-	}
-	ofstream oFileP("./test_p.txt");
-	if (oFileP)
-	{
-		for (auto i = 0; i < 100; i++)
-		{
-			oFileP << p[i] << ' ';
-		}
 		oFileP.close();
-	}
-	ofstream oFileU("./test_u.txt");
-	if (oFileU)
-	{
-		for (auto i = 0; i < 100; i++)
-		{
-			oFileU << u[i] << ' ';
-		}
 		oFileU.close();
 	}
 

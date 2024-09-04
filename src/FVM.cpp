@@ -38,7 +38,7 @@ vec3d FVM::rhoPUToConserVar(const vec3d& rhoPU)
 vec3d FVM::conserVarToRhoPU(const vec3d& conserVar)
 {
 	return { conserVar(0) ,
-		(gamma - 1.0) * (conserVar(2) - conserVar(1) / conserVar(0) * conserVar(1) / 2.0) ,
+		(gamma - 1.0) * (conserVar(2) - conserVar(1) * conserVar(1) / conserVar(0) / 2.0) ,
 		conserVar(1) / conserVar(0) };
 }
 
@@ -72,6 +72,11 @@ vector<vector<vec3d>> FVM::solve()
 
 FVM_Godunov::FVM_Godunov(const vector<vec3d>& U, double lBoundary, double rBoundary) :FVM(U, lBoundary, rBoundary)
 {
+}
+
+void FVM_Godunov::setRPSolverTol(double tol)
+{
+	RPSolverTol = tol;
 }
 
 void FVM_Godunov::setBoundaryValuesAndSlopes()
@@ -121,8 +126,9 @@ void FVM_Godunov::iterateOnce()
 	{
 		auto localRPSolver = RPSolver(U_n[i], U_n[i + 1]);
 		localRPSolver.setGamma(gamma);
-		auto localRPSol = localRPSolver.solve();
-		GodunovSols[i] = localRPSol.GodunovSol;
+		localRPSolver.setTol(RPSolverTol);
+		localRPSolver.solve();
+		GodunovSols[i] = localRPSolver(0.0, 1.0);
 	}
 
 	for (auto i = 2; i < spatialSize - 2; i++)
@@ -181,8 +187,9 @@ void FVM_2ndRK::iterateOnce()
 
 		auto localRPSolver = RPSolver(U_n_i_L, U_n_i_R);
 		localRPSolver.setGamma(gamma);
-		auto localRPSol = localRPSolver.solve();
-		GodunovSols[i] = localRPSol.GodunovSol;
+		localRPSolver.setTol(RPSolverTol);
+		localRPSolver.solve();
+		GodunovSols[i] = localRPSolver(0.0, 1.0);
 	}
 
 	auto L = [&](const vec3d& u, int cell_ind) -> vec3d
@@ -266,9 +273,10 @@ void FVM_GRP::iterateOnce()
 
 		auto localGRPSolver = GRPSolver(U_n_i_L, U_n_i_R, U_Slope[i], U_Slope[i + 1]);
 		localGRPSolver.setGamma(gamma);
-		auto localGRPSol = localGRPSolver.solve();
-		timeDeris[i] = localGRPSol.timeDerivative;
-		GodunovSols[i] = localGRPSol.GodunovSol;
+		localGRPSolver.setTol(RPSolverTol);
+		localGRPSolver.solve();
+		timeDeris[i] = localGRPSolver.timeDerivative();
+		GodunovSols[i] = localGRPSolver(0.0, 1.0);
 	}
 
 	auto Slopes = vector<vec3d>(spatialSize);

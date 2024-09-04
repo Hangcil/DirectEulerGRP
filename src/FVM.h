@@ -33,10 +33,12 @@ class FVM_Godunov :public FVM
 {
 public:
 	FVM_Godunov(const vector<vec3d>& U, double lBoundary, double rBoundary);
+	void setRPSolverTol(double tol);
 
 protected:
 	virtual void setBoundaryValuesAndSlopes() override; // 4
 	virtual void iterateOnce() override;
+	double RPSolverTol = 1.0e-8;
 };
 
 class FVM_2ndRK :public FVM_Godunov

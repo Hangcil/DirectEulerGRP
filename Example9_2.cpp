@@ -53,9 +53,9 @@ int main(int, char**)
 	vec3d Ur(1.0, 1.0e-6, -1.3);
 	auto solver = RPSolver(Ul, Ur);
 	solver.setGamma(5.0 / 3.0);
-	auto r1 = solver.solve();
-	double sigmaL = (r1.mlState(0) * r1.mlState(2) - 4.0 * (-0.3)) / (r1.mlState(0) - 4.0);
-	double sigmaR = (r1.mrState(0) * r1.mrState(2) - 1.0 * (-1.3)) / (r1.mrState(0) - 1.0);
+	solver.solve();
+	double sigmaL = (solver.rho_starL() * solver.u_star() - 4.0 * (-0.3)) / (solver.rho_starL() - 4.0);
+	double sigmaR = (solver.rho_starR() * solver.u_star() - 1.0 * (-1.3)) / (solver.rho_starR() - 1.0);
 
 	// numeric solution
 	auto U = vector<vec3d>(100);
@@ -72,44 +72,25 @@ int main(int, char**)
 	}
 	solver9_2 numericSolver(U, 0.0, 100.0);
 	numericSolver.setGamma(5.0 / 3.0);
-	numericSolver.setTimeAxis(2000.0, 0.2);
+	numericSolver.setTimeAxis(2000, 0.2);
 	numericSolver.setAlpha(1.0);
 	auto r = numericSolver.solve();
 
 	// write the numeric result to the files
 	auto r_T = r[r.size() - 1];
-	vector<double> rho, p, u;
-	for (auto i = 0; i < r_T.size(); i++)
-	{
-		rho.push_back(r_T[i](0));
-		p.push_back(r_T[i](1));
-		u.push_back(r_T[i](2));
-	}
 	ofstream oFileRho("./test_rho.txt");
-	if (oFileRho)
+	ofstream oFileP("./test_p.txt");
+	ofstream oFileU("./test_u.txt");
+	if (oFileRho && oFileP && oFileU)
 	{
-		for (auto i = 0; i < 100; i++)
+		for (auto i = 0; i < r_T.size(); i++)
 		{
-			oFileRho << rho[i] << ' ';
+			oFileRho << r_T[i](0) << ' ';
+			oFileP << r_T[i](1) << ' ';
+			oFileU << r_T[i](2) << ' ';
 		}
 		oFileRho.close();
-	}
-	ofstream oFileP("./test_p.txt");
-	if (oFileP)
-	{
-		for (auto i = 0; i < 100; i++)
-		{
-			oFileP << p[i] << ' ';
-		}
 		oFileP.close();
-	}
-	ofstream oFileU("./test_u.txt");
-	if (oFileU)
-	{
-		for (auto i = 0; i < 100; i++)
-		{
-			oFileU << u[i] << ' ';
-		}
 		oFileU.close();
 	}
 
