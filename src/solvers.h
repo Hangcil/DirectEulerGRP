@@ -43,6 +43,7 @@ public:
 
 protected:
 	double NewtonMethod(const scalarFun1d& f, const scalarFun1d& df, double start);
+	void initVar();
 	double gamma = 1.403;
 	double tol = 1.0e-10;
 	double rho_L = 0.0, rho_R = 0.0, p_L = 0.0, p_R = 0.0, u_L = 0.0, u_R = 0.0, c_L = 0.0, c_R = 0.0;

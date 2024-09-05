@@ -3,8 +3,13 @@
 RPSolver::RPSolver(const vec3d& lState, const vec3d& rState)
 {
 	rho_L = lState(0), rho_R = rState(0), p_L = lState(1), p_R = rState(1), u_L = lState(2), u_R = rState(2);
-	c_L = sqrt(gamma * p_L / rho_L), c_R = sqrt(gamma * p_R / rho_R);
+	initVar();
+}
+
+void RPSolver::initVar()
+{
 	mu_2 = (gamma - 1.0) / (gamma + 1.0);
+	c_L = sqrt(gamma * p_L / rho_L), c_R = sqrt(gamma * p_R / rho_R);
 	psi_L = u_L + 2.0 * c_L / (gamma - 1.0);
 	phi_R = u_R - 2.0 * c_R / (gamma - 1.0);
 	A_L = 2.0 / (gamma + 1.0) / rho_L, B_L = mu_2 * p_L, A_R = 2.0 / (gamma + 1.0) / rho_R, B_R = mu_2 * p_R;
@@ -13,12 +18,7 @@ RPSolver::RPSolver(const vec3d& lState, const vec3d& rState)
 void RPSolver::setGamma(double gamma)
 {
 	this->gamma = 1.0 < gamma && gamma <= 5.0 / 3.0 ? gamma : this->gamma;
-
-	mu_2 = (this->gamma - 1.0) / (this->gamma + 1.0);
-	c_L = sqrt(this->gamma * p_L / rho_L), c_R = sqrt(this->gamma * p_R / rho_R);
-	psi_L = u_L + 2.0 * c_L / (this->gamma - 1.0);
-	phi_R = u_R - 2.0 * c_R / (this->gamma - 1.0);
-	A_L = 2.0 / (this->gamma + 1.0) / rho_L, B_L = mu_2 * p_L, A_R = 2.0 / (this->gamma + 1.0) / rho_R, B_R = mu_2 * p_R;
+	initVar();
 }
 
 void RPSolver::setTol(double tol)
@@ -106,7 +106,6 @@ void RPSolver::solve()
 
 	p_star_ = NewtonMethod(f, df, 0.5 * (p_L + p_R));
 	u_star_ = 0.5 * (u_L + u_R + f_R(p_star_) - f_L(p_star_));
-	rho_starL_ = 0.0, rho_starR_ = 0.0;
 
 	if (p_star_ > p_L)
 	{
